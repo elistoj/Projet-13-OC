@@ -8,7 +8,6 @@ host: localhost:3001
 basePath: /api/v1
 schemes:
   - http
-
 paths:
   /user/login:
     post:
@@ -34,7 +33,6 @@ paths:
           description: Invalid Fields
         '500':
           description: Internal Server Error
-
   /user/signup:
     post:
       tags:
@@ -59,7 +57,6 @@ paths:
           description: Invalid Fields
         '500':
           description: Internal Server Error
-
   /user/profile:
     post:
       security:
@@ -73,19 +70,18 @@ paths:
           name: Authorization
           description: Attach Bearer JWT token
           required: true
-          type: string
+          type: string  # Add this line
       produces:
         - application/json
       responses:
         '200':
-          description: User profile retrieved successfully
+          description: User profile retrieved successully
           schema:
             $ref: '#/definitions/ApiResponse'
         '400':
           description: Invalid Fields
         '500':
           description: Internal Server Error
-
     put:
       security:
         - Bearer: []
@@ -98,7 +94,7 @@ paths:
           name: Authorization
           description: Attach Bearer JWT token
           required: true
-          type: string
+          type: string  # Add this line
         - in: body
           name: body
           description: Update user profile attributes
@@ -109,145 +105,41 @@ paths:
         - application/json
       responses:
         '200':
-          description: User profile updated successfully
+          description: User profile retrieved successully
           schema:
             $ref: '#/definitions/ApiResponse'
         '400':
           description: Invalid Fields
         '500':
           description: Internal Server Error
-
-  /transactions:
-    get:
-      tags:
-        - Transactions Module
-      summary: List Transactions
-      description: Retrieve the list of transactions for the current month, grouped by account
-      parameters:
-        - in: query
-          name: accountId
-          description: ID of the account for which transactions should be retrieved (optional)
-          required: false
-          type: string
-        - in: query
-          name: month
-          description: The month for which transactions should be retrieved (format YYYY-MM)
-          required: false
-          type: string
-      produces:
-        - application/json
-      responses:
-        '200':
-          description: Transactions successfully retrieved, grouped by account
-          schema:
-            type: object
-            properties:
-              accounts:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    accountId:
-                      type: string
-                      description: Account ID
-                    transactions:
-                      type: array
-                      items:
-                        $ref: '#/definitions/Transaction'
-        '400':
-          description: Invalid parameters
-        '500':
-          description: Internal Server Error
-
-  /transactions/{transactionId}:
-    get:
-      tags:
-        - Transactions Module
-      summary: Get Transaction Details
-      description: Retrieve details of a specific transaction
-      parameters:
-        - in: path
-          name: transactionId
-          description: ID of the transaction to retrieve
-          required: true
-          type: string
-      produces:
-        - application/json
-      responses:
-        '200':
-          description: Transaction details successfully retrieved
-          schema:
-            $ref: '#/definitions/Transaction'
-        '404':
-          description: Transaction not found
-        '500':
-          description: Internal Server Error
-
-    put:
-      tags:
-        - Transactions Module
-      summary: Update Transaction Details
-      description: Update specific details (category and notes) of an existing transaction
-      parameters:
-        - in: path
-          name: transactionId
-          description: ID of the transaction to update
-          required: true
-          type: string
-        - in: body
-          name: body
-          description: Details to be updated (category and notes)
-          required: true
-          schema:
-            type: object
-            properties:
-              category:
-                type: string
-                description: Updated category of the transaction
-              notes:
-                type: string
-                description: Updated notes for the transaction
-      produces:
-        - application/json
-      responses:
-        '200':
-          description: Transaction details successfully updated
-          schema:
-            $ref: '#/definitions/Transaction'
-        '400':
-          description: Invalid data provided
-        '404':
-          description: Transaction not found
-        '500':
-          description: Internal Server Error
-
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
 definitions:
   User:
-    type: object
     properties:
       email:
         type: string
-        description: User email
+        description: user email
       password:
         type: string
-        description: User password
+        description: user password
       firstName:
         type: string
-        description: User first name
+        description: user first name
       lastName:
         type: string
-        description: User last name
-
+        description: user last name
   Login:
-    type: object
     properties:
       email:
         type: string
-        description: User email
+        description: user email
       password:
         type: string
-        description: User password
-
+        description: user password
   ApiResponse:
     type: object
     properties:
@@ -262,13 +154,11 @@ definitions:
             type: string
           email:
             type: string
-
   LoginResponse:
     type: object
     properties:
       token:
         type: string
-
   UserProfile:
     type: object
     properties:
@@ -276,36 +166,3 @@ definitions:
         type: string
       lastName:
         type: string
-
-  Transaction:
-    type: object
-    properties:
-      id:
-        type: string
-        description: Transaction ID
-      accountId:
-        type: string
-        description: Account ID associated with the transaction
-      amount:
-        type: number
-        format: float
-        description: Transaction amount
-      description:
-        type: string
-        description: Description of the transaction
-      date:
-        type: string
-        format: date
-        description: Date of the transaction
-      category:
-        type: string
-        description: Category of the transaction
-      notes:
-        type: string
-        description: Additional notes for the transaction
-
-securityDefinitions:
-  Bearer:
-    type: apiKey
-    name: Authorization
-    in: header
